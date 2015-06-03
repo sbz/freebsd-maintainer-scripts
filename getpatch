@@ -30,7 +30,9 @@
 
 import argparse
 import codecs
+import os
 import re
+import ssl
 import sys
 if sys.version_info.major == 3:
     import urllib.request as urllib2
@@ -40,6 +42,14 @@ else:
 """
 FreeBSD getpatch handles Gnats and Bugzilla patch attachments
 """
+
+
+def create_ssl_context(cafile):
+    if os.path.exists(cafile):
+        return ssl.create_default_context(cafile=cafile)
+    else:
+        return ssl._create_unverified_context()
+
 
 class GetPatch(object):
 
@@ -51,6 +61,7 @@ class GetPatch(object):
         self.patch = ""
         self.output_stdout = False
         self.default_locale = sys.getdefaultencoding()
+        self.ssl_context = create_ssl_context('/usr/local/etc/ssl/cert.pem')
 
     def fetch(self, *largs, **kwargs):
         raise NotImplementedError()
@@ -78,7 +89,7 @@ class GetPatch(object):
             url = patch['url']
             p = patch['name']
 
-            data = urllib2.urlopen(url).read()
+            data = urllib2.urlopen(url, context=self.ssl_context).read()
 
             if self.output_stdout:
                 sys.stdout.write(data.decode(self.default_locale))
@@ -106,7 +117,7 @@ class GnatsGetPatch(GetPatch):
         target = ("%s/%s" % (category, self.pr), "%s" % self.pr)[category=='']
         self.out("[+] Fetching patch for pr %s" % target)
         pattern = re.compile(self.REGEX)
-        u = urllib2.urlopen(self.URL+'%s' % target)
+        u = urllib2.urlopen(self.URL+'%s' % target, context=self.ssl_context)
         data = u.read()
         if data == None:
             self.out("[-] No patch found")
@@ -126,7 +137,7 @@ class BzGetPatch(GetPatch):
         GetPatch.__init__(self, pr, category)
 
     def _get_patch_name(self, url):
-        match = re.search(self.REGEX, urllib2.urlopen(url).read())
+        match = re.search(self.REGEX, urllib2.urlopen(url, context=self.ssl_context).read())
         if match is None:
             return None
         return match.group(1)
@@ -147,7 +158,7 @@ class BzGetPatch(GetPatch):
     def fetch(self, *largs, **kwargs):
         category = kwargs['category']
         self.out("[+] Fetching patch for pr %s/%s" % (category, self.pr))
-        u = urllib2.urlopen(self.URL_SHOW+'%s' % self.pr)
+        u = urllib2.urlopen(self.URL_SHOW+'%s' % self.pr, context=self.ssl_context)
         data = u.read()
 
         if data == None:
