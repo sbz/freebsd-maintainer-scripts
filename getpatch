@@ -69,12 +69,12 @@ class GetPatch(object):
     def write(self, filename, data):
         if filename.endswith(('.patch', '.txt')):
             filename = filename[:filename.rindex('.')]+'.diff'
-        f=codecs.open(filename, encoding=self.default_locale, mode='w')
+        f = codecs.open(filename, encoding=self.default_locale, mode='w')
         f.write(data.decode(self.default_locale))
         f.close()
         self.out("[+] %s created" % filename)
 
-    def get(self,only_last=False, output_stdout=False):
+    def get(self, only_last=False, output_stdout=False):
         self.output_stdout = output_stdout
         self.fetch(self.pr, category=self.category)
 
@@ -103,6 +103,7 @@ class GetPatch(object):
         if not self.output_stdout:
             print(s)
 
+
 class GnatsGetPatch(GetPatch):
 
     URL_BASE = 'https://www.freebsd.org/cgi'
@@ -114,21 +115,22 @@ class GnatsGetPatch(GetPatch):
 
     def fetch(self, *largs, **kwargs):
         category = kwargs['category']
-        target = ("%s/%s" % (category, self.pr), "%s" % self.pr)[category=='']
+        target = ("%s/%s" % (category, self.pr), "%s" % self.pr)[category == '']
         self.out("[+] Fetching patch for pr %s" % target)
         pattern = re.compile(self.REGEX)
         u = urllib2.urlopen(self.URL+'%s' % target, context=self.ssl_context)
         data = u.read()
-        if data == None:
+        if data is None:
             self.out("[-] No patch found")
             sys.exit(1)
 
         for patchs in re.findall(pattern, str(data)):
             self.add_patch(patchs[0], patchs[1])
 
+
 class BzGetPatch(GetPatch):
 
-    URL_BASE= 'https://bugs.freebsd.org/bugzilla/'
+    URL_BASE = 'https://bugs.freebsd.org/bugzilla/'
     URL_SHOW = '%s/show_bug.cgi?id=' % URL_BASE
     REGEX_URL = r'<a href="([^<]+)">Details</a>'
     REGEX = r'<div class="details">([^ ]+) \(text/plain(?:; charset=[-\w]+)?\)'
@@ -161,7 +163,7 @@ class BzGetPatch(GetPatch):
         u = urllib2.urlopen(self.URL_SHOW+'%s' % self.pr, context=self.ssl_context)
         data = u.read()
 
-        if data == None:
+        if data is None:
             self.out("[-] No patch found")
             sys.exit(1)
 
@@ -173,6 +175,7 @@ class BzGetPatch(GetPatch):
         for url, file_name in patch_urls.iteritems():
             self.add_patch(url, file_name)
 
+
 def main():
 
     parser = argparse.ArgumentParser(
@@ -180,7 +183,7 @@ def main():
     )
     parser.add_argument('pr', metavar='pr', type=str, nargs=1,
             help='Pr id number')
-    parser.add_argument('--mode', type=str, choices=['gnats','bz'],
+    parser.add_argument('--mode', type=str, choices=['gnats', 'bz'],
             default='bz', help='available modes to retrieve patch')
     parser.add_argument('--last', action='store_true',
             help='only retrieve the latest iteration of a patch')
@@ -196,7 +199,7 @@ def main():
     category = ""
     pr = str(args.pr[0])
 
-    if '/' in pr and pr is not None:
+    if pr and '/' in pr:
         category, pr = pr.split('/')
 
     Clazz = globals()['%sGetPatch' % args.mode.capitalize()]
