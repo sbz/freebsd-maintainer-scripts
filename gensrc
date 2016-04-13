@@ -1,0 +1,17 @@
+#!/bin/csh
+
+if (${?argv} == 0) then
+    printf "%s\n" "Usage: gensrc with or without"
+    exit
+endif
+
+switch ($argv[1])
+case without:
+    zgrep 'WITHOUT' /usr/share/man/man5/src.conf.5.gz | sed -n 's/.*\(WITHOUT_[^ ]*\).*$/\1/p' | sort -u
+    breaksw
+case with:
+    zgrep 'WITH' /usr/share/man/man5/src.conf.5.gz | sed -n 's/.*\(WITH_[^ ]*\).*$/\1/p' | sort -u
+    breaksw
+default:
+    printf "%s\n" "Usage: gensrc with or without"
+endsw
