@@ -11,6 +11,7 @@ out_link = "http://portscout.freebsd.org/{}@freebsd.org.html".format(username)
 bts_args = "?email1={}%40FreeBSD.org&order=changeddate&resolution=---"
 bts_args = bts_args.format(username)
 bts_link = "https://bugs.freebsd.org/bugzilla/buglist.cgi{}"
+repo_link = "https://repology.org/maintainer/{}%40freebsd.org".format(username)
 
 
 class URL(object):
@@ -34,6 +35,7 @@ URLS = [
     URL(link="https://github.com/freebsd/", desc="github", abrv="gh"),
     URL(link="https://svnweb.freebsd.org/", desc="code browser", abrv="cb"),
     URL(link=out_link, desc="portcout", abrv="pc"),
+    URL(link=repo_link, desc="repology", abrv="rl"),
     URL(link=g_link, desc="freebsd-{}".format(username), abrv="gmail"),
     URL(link="https://wiki.freebsd.org", desc="wiki", abrv="wk"),
     URL(link="http://beefy6.nyi.freebsd.org/", desc="builder status",
