@@ -29,6 +29,12 @@ tasks:
 
 [poudriere(8)][6] helper to process testport action on multiple jails
 
++ **sss**
+
+[Python][2] script to display [subversion][7] verbose status (committer,
+message, files) updates by parsing XML log.
+
+
 + **vimport**
 
 [sh(1)][4] script to open all the Makefile for a given a maintainer
@@ -39,6 +45,7 @@ tasks:
 [4]: https://www.freebsd.org/cgi/man.cgi?sh
 [5]: https://www.freebsd.org/cgi/man.cgi?portlint
 [6]: https://github.com/freebsd/poudriere
+[7]: https://subversion.apache.org
 
 [src]: https://svn.freebsd.org/ports/head/Tools/scripts/getpatch
 [doc]: https://svn.freebsd.org/ports/head/Tools/scripts/README.getpatch
