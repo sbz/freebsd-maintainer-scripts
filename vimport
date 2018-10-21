@@ -3,4 +3,4 @@
 : ${PORTSDIR:="/usr/ports"}
 
 cd ${PORTSDIR}
-vim -p $(cd ${PORTSDIR}; psearch -m ${USER}|cut -d' ' -f1|xargs -I {} echo {}/Makefile)
+vim -c "set tabpagemax=100" -p $(cd ${PORTSDIR}; psearch -m sbz | sort -u | cut -d' ' -f1 | sed 's#.*#&/Makefile#')
