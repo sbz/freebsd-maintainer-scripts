@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 sss - sbz svn status verbose on one line
@@ -11,41 +11,14 @@ import sys
 import xml.etree.ElementTree as ET
 
 """
+Algorithm:
+
 line = Parse output of svn up
 foreach path in lines
     xml data = svn log -rHEAD path --xml
     author, shortmsg, status, path = parse xml data
     print status, path, shortmsg, status, author
 """
-
-x_data = """U    src/bin/dd/args.c
-U    src/bin/dd/conv.c
-U    src/bin/dd/dd.c
-U    src/bin/dd/dd.h
-U    src/bin/dd/position.c
-U    src/bin/pkill/pkill.c
-U    src/cddl/contrib/opensolaris/lib/libzfs/common/libzfs.h
-U    src/cddl/contrib/opensolaris/lib/libzfs/common/libzfs_import.c
-U    src/cddl/usr.sbin/zfsd/zfsd_event.cc
-U    src/contrib/compiler-rt/lib/builtins/arm/aeabi_dcmp.S
-U    src/contrib/compiler-rt/lib/builtins/arm/aeabi_fcmp.S
-U    src/contrib/compiler-rt/lib/esan/esan_sideline_linux.cpp
-U    src/contrib/compiler-rt/lib/profile/InstrProfilingNameVar.c
-U   src/contrib/compiler-rt
-U   src/contrib/libc++
-"""
-
-x_xml_data = """<?xml version="1.0" encoding="UTF-8"?>
-<log>
-<logentry
-   revision="322826">
-<author>kevans</author>
-<date>2017-08-24T01:23:33.506520Z</date>
-<msg>bsdgrep: add a primitive literal matcher
-</msg>
-</logentry>
-</log>"""
-
 
 def valid_line(line):
     if line.startswith('U ') or \
