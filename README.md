@@ -34,6 +34,9 @@ tasks:
 [Python][2] script to display [subversion][7] verbose status (committer,
 message, files) updates by parsing XML log.
 
++ **sysctl-missing-desc**
+
+[Python][2] script to track [sysctl(8)][1] with missing description
 
 + **vimport**
 
