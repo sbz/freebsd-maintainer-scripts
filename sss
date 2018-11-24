@@ -53,11 +53,13 @@ def main():
             root = ET.fromstring(xml_data)
             for commit in root.findall('logentry'):
                 author = commit.find('author').text
+                date = commit.find('date').text
                 shortmsg = commit.find('msg').text.split('\n')[0]
                 out['author'] = author
                 out['shortmsg'] = shortmsg
                 out['rev'] = commit.attrib.get('revision', 'norev')
-                svnmsg = "{status} {path}\t {shortmsg} | {rev} | {author}"
+                out['date'] = date.split('.')[0]
+                svnmsg = "{status} {path}\t {shortmsg} | {rev} | {author} | {date}"
                 print(svnmsg.format(**out))
         except:
             pass
