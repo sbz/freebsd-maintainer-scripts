@@ -21,6 +21,10 @@ tasks:
 [Python][2] script to download bug tracker attachment using the command line.
 [Documentation][doc]
 
++ **getprs.py**
+
+[Python][2] script to list bugs issues assigned using the command line.
+
 + **myportlint**
 
 [sh(1)][4] script to run [portlint(1)][5] on a bunch of ports
