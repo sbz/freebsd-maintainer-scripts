@@ -25,7 +25,7 @@ query = bz.build_query(
 
 bugs = bz.query(query)
 for bug in sorted(bugs, key=lambda x:x.last_change_time, reverse=True):
-    print("{:10} {:10} {:8} {:60}".format(bug.last_change_time, bug.id,
+    print("{:10} {:10} {:8} {:60}".format(str(bug.last_change_time), bug.id,
                                           bug.status, bug.summary))
 
 print("{} bugs currently opened.".format(len(bugs)))
