@@ -1,6 +1,6 @@
 #!/bin/sh
 
-svnbase="/home/sbz/svn/ports"
+svnbase="${HOME}/svn/ports"
 
 [ ! -f /usr/local/bin/distilator ] && pkg install -y distilator
 

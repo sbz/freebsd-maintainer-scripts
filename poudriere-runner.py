@@ -11,48 +11,37 @@ import shlex
 import subprocess
 import sys
 
+import colored
+from colored import stylize
+
 LOCALBASE="/usr/local"
 PORTSDIR="/usr/ports" or os.environ['PORTSDIR']
 
 default_conf="""
 [default]
-debug=False
+debug=True
 disk_path=%s/zfsfs
-jails=10i386,10amd64,93amd64,93i386
-jails_disabled=84i386,84amd64
+jails=12amd64,13amd64
+jails_disabled=14amd64
+mdconfig=False
 mdconfig_cmd=mdconfig -f
-cpuset=True
-cpuset_cmd=cpuset -c -l 0-3
+cpuset=False
+cpuset_cmd=cpuset -c -l 0-1
 
-[84i386]
-name=84i386
-arch=i386
-version=8.4-RELEASE
-
-[84amd64]
-name=84amd64
+[12amd64]
+name=12amd64
 arch=amd64
-version=8.4-RELEASE
+version=12.2-RELEASE
 
-[93i386]
-name=93i386
-arch=i386
-version=9.3-RELEASE
-
-[93amd64]
-name=93amd64
+[13amd64]
+name=13amd64
 arch=amd64
-version=9.3-RELEASE
+version=13.0-RC1
 
-[10i386]
-name=10i386
-arch=i386
-version=10.3-RELEASE
-
-[10amd64]
-name=10amd64
+[14amd64]
+name=14amd64
 arch=amd64
-version=10.3-RELEASE
+version=14.0-CURRENT
 """ % LOCALBASE
 
 class Prunner(object):
@@ -98,13 +87,13 @@ class Prunner(object):
     def testPort(self, origin, port_tree="portsdir"):
         for jail in self._jails:
             if debug:
-                print("testport o: {0}: j: {1}".format(origin, jail['name']))
-            cmd = "poudriere testport -o {0} -j {1} -p {2} -n".format(
+                print(stylize("testport o: {0} j: {1}".format(origin, jail['name']), colored.fg("magenta")))
+            cmd = "poudriere testport -o {0} -j {1} -p {2}".format(
                     origin,
                     jail['name'], port_tree)
             out, err = sudo(cmd)
             if debug:
-                print("j: {0}, out: {1}, err: {2}".format(jail['name'], out,
+                print("j: {0}\nout: {1}\nerr: {2}".format(jail['name'], out,
                     err))
 
     def testAll(self):
@@ -128,12 +117,12 @@ class Prunner(object):
 
 def run(command, use_sudo=False):
     cpuset_cmd = cfg.get('default', 'cpuset_cmd')
-    use_cpuset = cfg.get('default', 'cpuset')
+    use_cpuset = cfg.getboolean('default', 'cpuset')
     if use_cpuset:
         command = "%s %s" % (cpuset_cmd, command)
 
     command = "sudo %s" % command if use_sudo else command
-    p = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+    p = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, universal_newlines=True)
     stdout, stderr = p.communicate()
     p.wait()
     return stdout.strip(), stderr
@@ -142,6 +131,10 @@ def sudo(command):
     return run(command, use_sudo=True)
 
 def loadDisk():
+    if cfg.getboolean('default', 'mdconfig') is False:
+        print("Skip mdconfig...\n")
+        return
+
     mdconfig_cmd = cfg.get('default', 'mdconfig_cmd')
     disk_path = cfg.get('default', 'disk_path')
     if not os.path.exists('/dev/md0'):
@@ -149,7 +142,6 @@ def loadDisk():
         if err is not None:
             print("Error: {0}".format(out))
             sys.exit(1)
-    return True
 
 def loadJails():
     jails = []
@@ -175,7 +167,7 @@ def main():
     global cfg, debug
     cfg = configparser.ConfigParser()
     cfg.read_string(default_conf)
-    debug = cfg.get('default', 'debug')
+    debug = cfg.getboolean('default', 'debug')
     if debug:
         print(cfg.get('default', 'disk_path'))
 
@@ -188,7 +180,7 @@ def main():
 
     if isValidOrigin(origin):
         runner.testPort(origin)
-    #runner.testAll()
+    runner.testPort("security/libssh2")
 
 if __name__ == '__main__':
     main()
