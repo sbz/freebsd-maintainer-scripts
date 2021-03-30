@@ -11,6 +11,8 @@ import shlex
 import subprocess
 import sys
 
+from typing import List, Dict
+
 import colored
 from colored import stylize
 
@@ -20,6 +22,7 @@ PORTSDIR="/usr/ports" or os.environ['PORTSDIR']
 default_conf="""
 [default]
 debug=True
+setup=False
 disk_path=%s/zfsfs
 jails=12amd64,13amd64
 jails_disabled=14amd64
@@ -27,6 +30,8 @@ mdconfig=False
 mdconfig_cmd=mdconfig -f
 cpuset=False
 cpuset_cmd=cpuset -c -l 0-1
+sets_host=FREEBSD_HOST=https://download.FreeBSD.org
+port_tree=portsdir
 
 [12amd64]
 name=12amd64
@@ -48,16 +53,15 @@ class Prunner(object):
     def __init__(self):
         loadDisk()
         self._jails = loadJails()
-        self._port_trees = []
-        self.is_setup = True
-        if not self.is_setup:
+        self._port_tree = cfg.get("default", "port_tree")
+        self.is_setup = cfg.getboolean("default", "setup")
+        if self.is_setup:
             self.setUp()
 
-    def setUp(self, **params):
+    def setUp(self, **params: Dict):
         if debug:
-            print("setup...")
-        #TODO: test if exists to avoid recreating jails
-        params['host'] = 'FREEBSD_HOST=ftp.fr.freebsd.org'
+            print("Creating jail setup...")
+        params['host'] = cfg.get("default", "sets_host")
         for jail in self._jails:
             cmd = "poudriere jail -c -j {0} -a {1} -v {2} {3}".format(
                 jail['name'],
@@ -69,7 +73,8 @@ class Prunner(object):
             sudo(cmd)
 
     def tearDown(self):
-        #TODO: kill jail (stop them)
+        if debug:
+            print("Stoping jails teardown()...")
         for jail in self._jails:
             cmd = "poudriere jail -k -j {0}".format(jail['name'])
             if debug:
@@ -81,16 +86,16 @@ class Prunner(object):
        return self._jails
 
     @property
-    def port_trees(self):
-       return self._port_trees
+    def port_tree(self):
+       return self._port_tree
 
-    def testPort(self, origin, port_tree="portsdir"):
+    def testPort(self, origin: str, port_tree: str):
         for jail in self._jails:
             if debug:
-                print(stylize("testport o: {0} j: {1}".format(origin, jail['name']), colored.fg("magenta")))
+                print(stylize("testport o: {0} j: {1}".format(origin,
+                    jail['name']), colored.fg("magenta")))
             cmd = "poudriere testport -o {0} -j {1} -p {2}".format(
-                    origin,
-                    jail['name'], port_tree)
+                    origin, jail['name'], port_tree)
             out, err = sudo(cmd)
             if debug:
                 print("j: {0}\nout: {1}\nerr: {2}".format(jail['name'], out,
@@ -110,24 +115,24 @@ class Prunner(object):
         return ports
 
     def __del__(self):
-        if debug:
-            print("teardown()...")
         if hasattr(self, 'is_setup') and self.is_setup:
             self.tearDown()
 
-def run(command, use_sudo=False):
+def run(command: str, use_sudo=False) -> str:
     cpuset_cmd = cfg.get('default', 'cpuset_cmd')
     use_cpuset = cfg.getboolean('default', 'cpuset')
     if use_cpuset:
         command = "%s %s" % (cpuset_cmd, command)
 
     command = "sudo %s" % command if use_sudo else command
-    p = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, universal_newlines=True)
+    p = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE,
+            universal_newlines=True)
     stdout, stderr = p.communicate()
     p.wait()
+
     return stdout.strip(), stderr
 
-def sudo(command):
+def sudo(command: str):
     return run(command, use_sudo=True)
 
 def loadDisk():
@@ -159,8 +164,9 @@ def loadJails():
 
     return jails
 
-def isValidOrigin(origin):
+def isValidOrigin(origin: str):
     abspath = "{0}/{1}".format(PORTSDIR, origin)
+
     return os.path.isdir(abspath)
 
 def main():
@@ -179,8 +185,7 @@ def main():
         origin = sys.argv[1]
 
     if isValidOrigin(origin):
-        runner.testPort(origin)
-    runner.testPort("security/libssh2")
+        runner.testPort(origin, runner.port_tree)
 
 if __name__ == '__main__':
     main()
