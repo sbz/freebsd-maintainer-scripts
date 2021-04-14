@@ -41,7 +41,7 @@ version=12.2-RELEASE
 [13amd64]
 name=13amd64
 arch=amd64
-version=13.0-RC1
+version=13.0-RELEASE
 
 [14amd64]
 name=14amd64
