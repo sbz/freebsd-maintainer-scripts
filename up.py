@@ -23,31 +23,20 @@ svn_update_cmd=svn update
 svn_clone_cmd=svn checkout
 
 [freebsd-src]
-scm=svn
-remote=svn+ssh://{1}@svn.freebsd.org/base/head
-local={0}/freebsd/svn/src
+remote=https://git.freebsd.org/src.git
+local={0}/freebsd/src
 
 [freebsd-ports]
-scm=svn
-remote=svn+ssh://{1}@svn.freebsd.org/ports/head
-local={0}/freebsd/svn/ports
+remote=https://git.freebsd.org/ports.git
+local={0}/freebsd/ports
 
 [freebsd-doc]
-scm=svn
-remote=svn+ssh://{1}@svn.freebsd.org/doc/head
-local={0}/freebsd/svn/doc
-
-[netbsd-src]
-remote=http://git.edgebsd.org/EdgeBSD/netbsd-src.git
-local={0}/netbsd/git/src
-
-[netbsd-pkgsrc]
-remote=http://git.edgebsd.org/EdgeBSD/netbsd-pkgsrc.git
-local={0}/netbsd/git/pkgsrc
+remote=https://git.freebsd.org/doc.git
+local={0}/freebsd/doc
 
 [openbsd-src]
-remote=git://anoncvs.estpak.ee/openbsd-src
-local={0}/openbsd/git/src
+remote=https://github.com/openbsd/src.git
+local={0}/openbsd/src
 """.format(pwd, user)
 
 cfg = configparser.ConfigParser()

@@ -8,7 +8,6 @@ LICENSE=		BSD
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 BUILD_DEPENDS=	distilator>0:${PORTSDIR}/ports-mgmt/distilator \
-				subversion>0:${PORTSDIR}/devel/subversion \
 				python3>0:${PORTSDIR}/lang/python3 \
 				portlint>0:${PORTSDIR}/ports-mgmt/portlint \
 				poudriere>0:${PORTSDIR}/devel/poudriere
