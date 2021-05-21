@@ -60,6 +60,7 @@ class Checker(object):
             stdin, stdout, stderr = client.exec_command(cmd)
         except paramiko.SSHException as e:
             print(f"Failed to execute remote {cmd}: (stderr: {stderr.read()}")
+            raise e
 
         return stdout
 
@@ -69,11 +70,20 @@ class Checker(object):
         if len(files) == 0:
             return False
 
+        if self.dryrun:
+            mode = "Dry run"
+        else:
+            mode = "+"
+
         for f in files:
-            mode = "+" if not self.dryrun else "Dry run"
-            print(f"[{mode}] Cleaning {f.name} dating from {f.date}", end=' ')
-            self.clean_file(f.name)
-            print(f"\N{check mark}" if not self.dryrun else f"\N{cross mark}")
+            print(f"[{mode}] Cleaning {f.name} from {f.date}", end=' ')
+            try:
+                self.clean_file(f.name)
+            except Exception as e:
+                mark = "\u2757"
+            else:
+                mark = "\N{cross mark}" if self.dryrun else "\u2705"
+            print(f"{mark}")
 
         return True
         
@@ -94,7 +104,10 @@ class Checker(object):
         clean_cmd = f"rm -vf {self.path}{file_name}"
         if self.dryrun:
             clean_cmd = "echo " + clean_cmd
-        stdout = self.remote_exec(clean_cmd)
+        try:
+            stdout = self.remote_exec(clean_cmd)
+        except Exception as e:
+            raise Exception(f"Cleaning error for file {file_name}")
 
 def main() -> int:
     global MAX_KEEP_YEAR
@@ -104,7 +117,7 @@ def main() -> int:
     )
 
     parser.add_argument(
-        "-n", "--dryrun", action='store_true',
+        "-n", "--dryrun", action='store_true'
         help="Dry run mode. Do not execute remote command"
     )
     parser.add_argument(
@@ -120,7 +133,7 @@ def main() -> int:
     if args.dryrun:
         checker = Checker(dryrun=True)
 
-    print(f"[+] Only files older than {MAX_KEEP_YEAR}")
+    print(f"[+] Process files older than {MAX_KEEP_YEAR} year old")
     if not checker.clean_files():
         print("Nothing to clean.")
         return 1
