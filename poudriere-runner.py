@@ -22,10 +22,10 @@ PORTSDIR = "/usr/ports" or os.environ["PORTSDIR"]
 default_conf = (
     """
 [default]
-debug=True
+debug=False
 setup=False
 disk_path=%s/zfsfs
-jails=12amd64,13amd64
+jails=11amd64,12amd64,13amd64
 jails_disabled=14amd64
 mdconfig=False
 mdconfig_cmd=mdconfig -f
@@ -33,6 +33,11 @@ cpuset=False
 cpuset_cmd=cpuset -c -l 0-1
 sets_host=FREEBSD_HOST=https://download.FreeBSD.org
 port_tree=portsdir
+
+[11amd64]
+name=11amd64
+arch=amd64
+version=11.4-RELEASE
 
 [12amd64]
 name=12amd64
@@ -141,7 +146,8 @@ def sudo(command: str):
 
 def loadDisk():
     if cfg.getboolean("default", "mdconfig") is False:
-        print("Skip mdconfig...\n")
+        if debug:
+            print("Skip mdconfig...\n")
         return
 
     mdconfig_cmd = cfg.get("default", "mdconfig_cmd")
