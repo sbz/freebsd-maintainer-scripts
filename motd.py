@@ -1,3 +1,5 @@
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
 import os
 import shlex
 import subprocess

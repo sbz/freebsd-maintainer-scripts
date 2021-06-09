@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
 """
 This simple script is an helper to purge old files left into
-freefall:~/public_distfiles for ages to reclaim disk space. 
+freefall:~/public_distfiles for ages to reclaim disk space.
 
 It uses paramiko, /bin/ls and /bin/rm to delete the obsolete files
 
@@ -86,7 +88,7 @@ class Checker(object):
             print(f"{mark}")
 
         return True
-        
+
     def read_stream(self, stream_input: paramiko.Channel) -> list:
         lines = []
 
