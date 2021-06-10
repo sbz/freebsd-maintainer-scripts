@@ -117,21 +117,34 @@ def main() -> int:
     )
 
     parser.add_argument(
-        "-n", "--dryrun", action='store_true'
+        "-n", "--dryrun", action='store_true',
         help="Dry run mode. Do not execute remote command"
     )
+
     parser.add_argument(
         "-m", "--max-year", type=int,
         help="Maximum year to keep the files"
+    )
+
+    parser.add_argument(
+        "-u", "--user", type=str,
+        help="Run as user"
     )
 
     args = parser.parse_args()
     if args.max_year:
         MAX_KEEP_YEAR = args.max_year
 
-    checker = Checker()
+    kwargs = {}
+
+    if args.user:
+        kwargs.update(user=args.user)
+
     if args.dryrun:
-        checker = Checker(dryrun=True)
+        kwargs.update(user=args.user)
+        kwargs.update(dryrun=True)
+
+    checker = Checker(**kwargs)
 
     print(f"[+] Process files older than {MAX_KEEP_YEAR} year old")
     if not checker.clean_files():
