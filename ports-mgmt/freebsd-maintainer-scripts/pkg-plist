@@ -1,0 +1,4 @@
+bin/fms-check-distfile
+bin/fms-ftabs
+bin/fms-gensrc
+bin/fms-getpr

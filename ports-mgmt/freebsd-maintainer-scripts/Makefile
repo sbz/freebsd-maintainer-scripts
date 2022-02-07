@@ -18,16 +18,17 @@ RUN_DEPENDS=	${BUILD_DEPENDS}
 
 NO_BUILD=	yes
 USE_GITHUB=	yes
+USES=		python
 
 GH_ACCOUNT=	sbz
 GH_PROJECT=	freebsd-maintainer-scripts
 GH_TAGNAME=	a0e9912
 
-post-patch:
+do-install:
 	@${MKDIR} ${STAGEDIR}/usr/bin/
-	cp ${WRKSRC}/check-distfile.sh ${STAGEDIR}/usr/bin/fms-check-distfile
-	cp ${WRKSRC}/ftabs.py ${STAGEDIR}/usr/bin/fms-ftabs
-	cp ${WRKSRC}/gensrc ${STAGEDIR}/usr/bin/fms-gensrc
-	cp ${WRKSRC}/getprs.py ${STAGEDIR}/usr/bin/fms-getpr
+	${INSTALL_SCRIPT} ${WRKSRC}/check-distfile.sh ${STAGEDIR}${PREFIX}/bin/fms-check-distfile
+	${INSTALL_SCRIPT} ${WRKSRC}/ftabs.py ${STAGEDIR}${PREFIX}/bin/fms-ftabs
+	${INSTALL_SCRIPT} ${WRKSRC}/gensrc ${STAGEDIR}${PREFIX}/bin/fms-gensrc
+	${INSTALL_SCRIPT} ${WRKSRC}/getprs.py ${STAGEDIR}${PREFIX}/bin/fms-getpr
 
 .include <bsd.port.mk>
