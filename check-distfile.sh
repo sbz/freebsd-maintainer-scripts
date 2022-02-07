@@ -1,10 +1,12 @@
 #!/bin/sh
 
-svnbase="${HOME}/svn/ports"
+repopath="${HOME}/git/ports"
+
+[ ! -f "${repopath}/INDEX*" ] && make -C "${repopath}" fetchindex
 
 [ ! -f /usr/local/bin/distilator ] && pkg install -y distilator
 
-ports=$(make -C "${svnbase}" search key="sbz@FreeBSD.org" \
+ports=$(make -C "${repopath}" search key="sbz@FreeBSD.org" \
     display=path|grep -v ^$|awk '{print $2}')
 
 for origin in ${ports};
