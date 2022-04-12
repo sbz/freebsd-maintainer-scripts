@@ -1,5 +1,5 @@
 PORTNAME=		freebsd-maintainer-scripts
-DISTVERSION=	20210528
+DISTVERSION=	20220412
 CATEGORIES=		ports-mgmt
 
 MAINTAINER=		sbz@FreeBSD.org
@@ -22,7 +22,7 @@ USES=		python
 
 GH_ACCOUNT=	sbz
 GH_PROJECT=	freebsd-maintainer-scripts
-GH_TAGNAME=	a0e9912
+GH_TAGNAME=	1018b22
 
 do-install:
 	@${MKDIR} ${STAGEDIR}/usr/bin/
