@@ -1,5 +1,5 @@
 PORTNAME=		freebsd-maintainer-scripts
-DISTVERSION=	20220412
+DISTVERSION=	20220522
 CATEGORIES=		ports-mgmt
 
 MAINTAINER=		sbz@FreeBSD.org
@@ -18,11 +18,11 @@ RUN_DEPENDS=	${BUILD_DEPENDS}
 
 NO_BUILD=	yes
 USE_GITHUB=	yes
-USES=		python shebangfix
+USES=		python:3.8+ shebangfix
 
 GH_ACCOUNT=	sbz
 GH_PROJECT=	freebsd-maintainer-scripts
-GH_TAGNAME=	354b2c8
+GH_TAGNAME=	e101cd1
 
 SHEBANG_FILES=	${WRKSRC}/ftabs.py \
 		${WRKSRC}/getprs.py
