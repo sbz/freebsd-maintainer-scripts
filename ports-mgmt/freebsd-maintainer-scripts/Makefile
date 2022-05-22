@@ -9,7 +9,7 @@ LICENSE=		BSD2CLAUSE
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 BUILD_DEPENDS=	distilator>0:ports-mgmt/distilator \
-				python3>0:lang/python3 \
+				python38>0:lang/python38 \
 				portlint>0:ports-mgmt/portlint \
 				poudriere>0:ports-mgmt/poudriere \
 				${PYTHON_PKGNAMEPREFIX}python-bugzilla>0:devel/py-python-bugzilla@${PY_FLAVOR}
@@ -18,11 +18,14 @@ RUN_DEPENDS=	${BUILD_DEPENDS}
 
 NO_BUILD=	yes
 USE_GITHUB=	yes
-USES=		python
+USES=		python shebangfix
 
 GH_ACCOUNT=	sbz
 GH_PROJECT=	freebsd-maintainer-scripts
-GH_TAGNAME=	1018b22
+GH_TAGNAME=	354b2c8
+
+SHEBANG_FILES=	${WRKSRC}/ftabs.py \
+		${WRKSRC}/getprs.py
 
 do-install:
 	@${MKDIR} ${STAGEDIR}/usr/bin/
