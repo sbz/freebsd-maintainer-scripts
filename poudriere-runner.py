@@ -27,8 +27,8 @@ default_conf = (
 debug=False
 setup=False
 disk_path=%s/zfsfs
-jails=12amd64
-jails_disabled=11amd64,13amd64,14amd64
+jails=14amd64
+jails_disabled=
 mdconfig=False
 mdconfig_cmd=mdconfig -f
 cpuset=False
@@ -36,25 +36,15 @@ cpuset_cmd=cpuset -c -l 0-1
 sets_host=FREEBSD_HOST=https://download.FreeBSD.org
 port_tree=portsdir
 
-[11amd64]
-name=11amd64
-arch=amd64
-version=11.4-RELEASE
-
-[12amd64]
-name=12amd64
-arch=amd64
-version=12.2-RELEASE
-
 [13amd64]
 name=13amd64
 arch=amd64
-version=13.0-RELEASE
+version=13.4-RELEASE
 
 [14amd64]
 name=14amd64
 arch=amd64
-version=14.0-CURRENT
+version=14.2-RELEASE
 """
     % LOCALBASE
 )
